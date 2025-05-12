@@ -54,7 +54,7 @@ const useClock = () => {
       .call(drag as any);
 
     const updateClock = () => {
-      const hourAngle = (minutes / 1440) * 360;
+      const hourAngle = (minutes / 60 / 12) * 360;
       const minuteAngle = ((minutes % 60) / 60) * 360;
 
       svg.selectAll(".hour-hand").remove();
