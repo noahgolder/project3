@@ -33,7 +33,7 @@ const App = () => {
         <Clock />
         <Thermometer temp={maleTemp} gender="male" />
       </div>
-      <Dashboard />
+      <Dashboard isNight={isNight} />
       {Array.from({ length: 10 }).map((_, index) => (
         <Mouse key={index} speed={10} />
       ))}

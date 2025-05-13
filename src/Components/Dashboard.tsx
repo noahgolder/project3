@@ -9,7 +9,11 @@ interface MouseSeries {
   values: number[];
 }
 
-function MouseDashboard() {
+interface DashboardProps {
+  isNight: boolean;
+}
+
+function MouseDashboard({ isNight }: DashboardProps) {
   const [series, setSeries] = useState<MouseSeries[]>([]);
   const { minutes } = useStore();
 
@@ -38,7 +42,7 @@ function MouseDashboard() {
     .nice();
 
   const plot = (subset: MouseSeries[], width: number, height: number) => {
-    const mouse = { top: 20, right: 20, bottom: 30, left: 40 };
+    const mouse = { top: 60, right: 50, bottom: 40, left: 50 };
     const innerHeight = height - mouse.top - mouse.bottom;
 
     const xScale = d3
@@ -48,6 +52,8 @@ function MouseDashboard() {
       .padding(0.1);
 
     yScale.range([innerHeight + mouse.top, mouse.top]);
+
+    const textColor = isNight ? "#FFFFFF" : "#000000";
 
     return (
       <svg width={width} height={height} className="mouse-chart" key={subset[0]?.sex}>
@@ -59,6 +65,37 @@ function MouseDashboard() {
           ref={(g) => g && d3.select(g).call(d3.axisBottom(xScale).tickSizeOuter(0))}
           transform={`translate(0,${innerHeight + mouse.top})`}
         />
+
+        <text
+          x={width / 2}
+          y={mouse.top / 2}
+          textAnchor="middle"
+          className="text-lg font-bold"
+          fill={textColor}
+        >
+          {subset[0]?.sex === "f" ? "Female Mouse Activity" : "Male Mouse Activity"}
+        </text>
+
+        <text
+          transform={`rotate(-90)`}
+          x={- (height / 2)}
+          y={mouse.left -35}
+          textAnchor="middle"
+          className="text-md font-regular"
+          fill={textColor}
+        >
+          Activity Level
+        </text>
+
+        <text
+          x={width / 2}
+          y={height - 6}
+          textAnchor="middle"
+          className="text-md font-regular"    
+          fill={textColor}    
+        >
+          Mouse ID
+        </text>
 
         {subset.map((s) => {
           const idx = Math.floor(minutes) % s.values.length;
@@ -76,15 +113,6 @@ function MouseDashboard() {
               width={xScale.bandwidth()}
               height={barHeight}
               fill={color}
-              ref={(rect) => {
-                if (rect) {
-                  d3.select(rect)
-                    .transition()
-                    .duration(50)
-                    .attr("y", y)
-                    .attr("height", barHeight);
-                }
-              }}
             />
           );
         })}
