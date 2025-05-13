@@ -1,2 +1,9 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+.mouse-dashboard {
+    /* @apply flex flex-col h-screen; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
