@@ -16,7 +16,7 @@ const Clock = () => {
     <div className="flex flex-col items-center gap-4">
       <h1 className="text-2xl font-bold">
         <span>{String(Math.floor(minutes / 60) % 12 || 12).padStart(2, "0")}</span> :{" "}
-        <span>{String(Math.round(minutes % 60)).padStart(2, "0")}</span>{" "}
+        <span>{String(Math.floor(minutes % 60)).padStart(2, "0")}</span>{" "}
         <span>{minutes > 60 * 12 ? "PM" : "AM"}</span>
       </h1>
       <svg ref={svgRef} />

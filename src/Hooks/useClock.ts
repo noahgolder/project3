@@ -101,7 +101,7 @@ const useClock = () => {
     };
   }, [minutes]);
 
-  return { svgRef, minutes, setMinutes, play, setPlay, speed, setSpeed };
+  return { svgRef, play, setPlay, speed, setSpeed };
 };
 
 export default useClock;
