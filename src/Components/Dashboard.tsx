@@ -7,7 +7,7 @@ interface MouseSeries {
   sex: "f" | "m";
   values: number[];
 }
-function Dashboard() {
+function MouseDashboard() {
   const [series, setSeries] = useState<MouseSeries[]>([]);
   const [frame, setFrame] = useState(0);
 
@@ -17,7 +17,7 @@ function Dashboard() {
 
       const parsed: MouseSeries[] = activityCols.map((col) => {
         const id = col.replace("_act", "");
-        const sex = id.startsWith("f") ? "f" : "m";
+        const sex  = id.startsWith("f") ? "f" : "m";
         const values = rows.map((row) => +row[col]);
         return { id, sex, values };
       });
@@ -57,26 +57,26 @@ function Dashboard() {
       .padding(0.1);
 
     yScale.range([innerHeight + mouse.top, mouse.top]);
-    
+
     return (
       <svg width={width} height={height} className="mouse-chart" key={subset[0]?.sex}>
-        {/* axes /}
+        {/* axes */}
         <g
           ref={(g) => g && d3.select(g).call(d3.axisLeft(yScale).ticks(5))}
-          transform={translate(${mouse.left},0)}
+          transform={`translate(${mouse.left},0)`}
         />
         <g
           ref={(g) => g && d3.select(g).call(d3.axisBottom(xScale).tickSizeOuter(0))}
-          transform={translate(0,${innerHeight + mouse.top})}
+          transform={`translate(0,${innerHeight + mouse.top})`}
         />
 
-        {/ bars */}
+        {/* bars */}
         {subset.map((s) => {
-          const values = s.values[frame];
-          const x = xScale(s.id)!;
-          const y = yScale(values);
-          const barHeight = yScale(0) - y;
-          const color = s.sex === "f" ? "#e56997" : "#4f83c4";
+          const values       = s.values[frame];
+          const x       = xScale(s.id)!;
+          const y       = yScale(values);
+          const barHeight    = yScale(0) - y;
+          const color  = s.sex === "f" ? "#e56997" : "#4f83c4";
 
           return (
             <rect
@@ -93,15 +93,16 @@ function Dashboard() {
     );
   };
 
-  const height = 600;
-  const width = 600;
+
+  const height = 350;
+  const width  = 350;
 
   return (
-    <div className="mouse-dashboard">
+    <div className="flex justify-center items-center">
       {plot(females, width, height)}
       {plot(males, width, height)}
     </div>
   );
 }
 
-export default Dashboard;
+export default MouseDashboard;
