@@ -5,10 +5,17 @@ const Thermometer = ({ temp, setTemp }: { temp: number, setTemp: (temp: number) 
   const maxTemp = 37;
   const minTemp = 30;
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const [minTemp, setMinTemp] = useState(temp);
+  const [maxTemp, setMaxTemp] = useState(temp);
+
+  // Update the min/max range dynamically
+  useEffect(() => {
+    if (temp < minTemp) setMinTemp(temp);
+    if (temp > maxTemp) setMaxTemp(temp);
+  }, [temp, minTemp, maxTemp]);
 
   useEffect(() => {
     const svg = d3.select(svgRef.current);
-
     svg.selectAll("*").remove();
 
     // Create the thermometer structure
@@ -28,6 +35,12 @@ const Thermometer = ({ temp, setTemp }: { temp: number, setTemp: (temp: number) 
     // Calculate the fill height based on temp
     const fillHeight = Math.min(Math.max((200 * (temp - minTemp)) / (maxTemp - minTemp), 0), 200);
 
+    // Create a color scale for the gradient (Blue -> White -> Red)
+    const colorScale = d3
+      .scaleLinear<string>()
+      .domain([minTemp, (minTemp + maxTemp) / 2, maxTemp])
+      .range(["blue", "white", "red"]);
+
     // Temperature Fill
     svg
       .append("rect")
@@ -35,7 +48,7 @@ const Thermometer = ({ temp, setTemp }: { temp: number, setTemp: (temp: number) 
       .attr("y", 220 - fillHeight)
       .attr("width", 10)
       .attr("height", fillHeight)
-      .attr("fill", "red")
+      .attr("fill", colorScale(temp))
       .attr("rx", 5)
       .attr("ry", 5);
 
