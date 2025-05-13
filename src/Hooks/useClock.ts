@@ -12,6 +12,16 @@ const useClock = () => {
   const draggingRef = useRef(false);
 
   useEffect(() => {
+    if (!play) return;
+
+    const interval = setInterval(() => {
+      setMinutes(prev => (prev + speed) % 1440);
+    }, 1000 / 60);
+
+    return () => clearInterval(interval);
+  }, [play, speed]);
+
+  useEffect(() => {
     const radius = 150;
     const svg = d3
       .select(svgRef.current)

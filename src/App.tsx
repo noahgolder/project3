@@ -1,22 +1,19 @@
 import React, { useState } from "react";
 import Thermometer from "./Components/Thermometer";
+import Clock from "./Components/Clock";
+import Mouse from "./Components/Mouse";
 
 const App: React.FC = () => {
-  const [temperature, setTemperature] = useState(50);
+  const [temperature, setTemperature] = useState(35);
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <h1>Dynamic Thermometer</h1>
-      <Thermometer temp={temperature} />
-      <input 
-        type="range" 
-        min="0" 
-        max="100" 
-        value={temperature} 
-        onChange={(e) => setTemperature(Number(e.target.value))}
-        style={{ marginTop: "20px" }}
-      />
-      <p>{temperature}°C</p>
+    <div className="flex items-center justify-center gap-4 relative min-h-screen overflow-hidden">
+      <Thermometer temp={temperature} setTemp={setTemperature} />
+      <Clock />
+      <Thermometer temp={temperature} setTemp={setTemperature} />
+      {Array.from({ length: 10 }).map((_, index) => (
+        <Mouse key={index} speed={10} />
+      ))}
     </div>
   );
 };
