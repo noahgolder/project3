@@ -56,7 +56,7 @@ function MouseDashboard({ isNight }: DashboardProps) {
     const textColor = isNight ? "#FFFFFF" : "#000000";
 
     return (
-      <svg width={width} height={height} className="mouse-chart" key={subset[0]?.sex}>
+      <svg width={width} height={height} className="mouse-chart mt-6" key={subset[0]?.sex}>
         <g
           ref={(g) => g && d3.select(g).call(d3.axisLeft(yScale).ticks(5))}
           transform={`translate(${mouse.left},0)`}
