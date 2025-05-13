@@ -1,22 +1,13 @@
-import React, { useState } from "react";
+// App.tsx
+import React from "react";
 import Thermometer from "./Components/Thermometer";
 
 const App: React.FC = () => {
-  const [temperature, setTemperature] = useState(20);
-
   return (
-    <div style={{ textAlign: "center" }}>
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>Dynamic Thermometer</h1>
-      <Thermometer temp={temperature} />
-      <input 
-        type="range" 
-        min="-50" 
-        max="150" 
-        value={temperature} 
-        onChange={(e) => setTemperature(Number(e.target.value))}
-        style={{ marginTop: "20px" }}
-      />
-      <p>{temperature}°C</p>
+      {/* The Thermometer automatically uses hardcoded min and max values */}
+      <Thermometer />
     </div>
   );
 };
