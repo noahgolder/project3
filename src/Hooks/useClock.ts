@@ -1,8 +1,9 @@
 import { useRef, useEffect, useState } from "react";
 import * as d3 from "d3";
+import useStore from "./useStore";
 
 const useClock = () => {
-  const [minutes, setMinutes] = useState(0);
+  const { minutes, setMinutes } = useStore();
   const [play, setPlay] = useState(false);
   const [speed, setSpeed] = useState(1);
 
@@ -15,11 +16,11 @@ const useClock = () => {
     if (!play) return;
 
     const interval = setInterval(() => {
-      setMinutes(prev => (prev + speed) % 1440);
+      setMinutes((minutes + speed) % 1440);
     }, 1000 / 60);
 
     return () => clearInterval(interval);
-  }, [play, speed]);
+  }, [play, speed, minutes]);
 
   useEffect(() => {
     const radius = 150;
