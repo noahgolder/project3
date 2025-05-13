@@ -24,11 +24,11 @@ const Clock = () => {
         <button className="cursor-pointer" onClick={() => setSpeed((prev) => prev > 0.25 ? prev / 2 : prev)}>
           <BsSkipBackwardFill />
         </button>
-        <button className="cursor-pointer" onClick={() => setMinutes(minutes - 60)}>
+        <button className="cursor-pointer" onClick={() => setMinutes((minutes - 60) % 1440)}>
           <BsSkipStartFill />
         </button>
         <button className="cursor-pointer" onClick={() => setPlay(!play)}>{play ? <FaPause /> : <FaPlay />}</button>
-        <button className="cursor-pointer" onClick={() => setMinutes(minutes + 60)}>
+        <button className="cursor-pointer" onClick={() => setMinutes((minutes + 60) % 1440)}>
           <BsSkipEndFill />
         </button>
         <button className="cursor-pointer" onClick={() => setSpeed((prev) => prev < 16 ? prev * 2 : prev)}>

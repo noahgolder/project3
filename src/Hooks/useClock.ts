@@ -5,7 +5,7 @@ import useStore from "./useStore";
 const useClock = () => {
   const { minutes, setMinutes } = useStore();
   const [play, setPlay] = useState(false);
-  const [speed, setSpeed] = useState(1);
+  const [speed, setSpeed] = useState(2);
 
   const svgRef = useRef(null);
   const initialAngleRef = useRef(0);

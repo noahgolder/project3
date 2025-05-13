@@ -4,6 +4,7 @@ import Mouse from "./Components/Mouse";
 import Dashboard from "./Components/Dashboard";
 import mouseData from "./Assets/mouse_data.json";
 import useStore from "./Hooks/useStore";
+import { useDayNight } from "./Hooks/useDayNight";
 import { useState, useEffect } from "react";
 import {
   BsSkipBackwardFill,
@@ -14,28 +15,23 @@ import {
 import { FaPause, FaPlay } from "react-icons/fa";
 
 const App = () => {
+  useDayNight();
   let { minutes } = useStore();
   minutes = Math.floor(minutes);
 
   const maleTemp = mouseData[minutes as keyof typeof mouseData]["male"]["temperature"];
   const femaleTemp = mouseData[minutes as keyof typeof mouseData]["female"]["temperature"];
-  const [isNight, setIsNight] = useState(true);
-
-  useEffect(() => {
-    const currentHour = (minutes / 60) % 24;
-    setIsNight(currentHour >= 18 || currentHour < 6);
-  }, [minutes]);
+  const maleActivity = mouseData[minutes as keyof typeof mouseData]["male"]["activity"];
+  const femaleActivity = mouseData[minutes as keyof typeof mouseData]["female"]["activity"];
 
   return (
-  <div
-    className="flex flex-col min-h-screen overflow-hidden"
-    style={{
-      backgroundColor: isNight ? "#1D232A" : "#FFFFFF",
-      color: isNight ? "#FFFFFF" : "#000000",
-      transition: "background-color 0.5s, color 0.5s",
-    }}
-  >
-    {/* Outer wrapper to center content */}
+    <div className="flex flex-col items-center relative min-h-screen overflow-hidden">
+      <div className="absolute inset-0 z-0">
+        <Mouse speed={maleActivity} gender="male" />
+        <Mouse speed={femaleActivity} gender="female" />
+      </div>
+      <div className="relative z-10 flex flex-col items-center w-full">
+        {/* Outer wrapper to center content */}
     <div className="flex justify-center w-full">
       <div className="flex flex-row max-w-7xl w-full px-8 gap-x-16 mt-6">
         {/* Left side: legend and description */}
@@ -119,8 +115,7 @@ const App = () => {
       </div>
     </div>
   </div>
-);
-
+  );
 };
 
 export default App;
