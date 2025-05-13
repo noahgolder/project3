@@ -11,7 +11,6 @@ interface MouseSeries {
 
 function MouseDashboard() {
   const [series, setSeries] = useState<MouseSeries[]>([]);
-  // const [frame, setFrame] = useState(0);
   const { minutes } = useStore();
 
   useEffect(() => {
@@ -28,18 +27,6 @@ function MouseDashboard() {
       setSeries(parsed);
     });
   }, []);
-
-  // // sets up the animation
-  // useEffect(() => {
-  //   if (series.length === 0) {
-  //     return;
-  //   }
-  //   const id = setInterval(() => {
-  //     setFrame((f) => (f + 1) % series[0].values.length);
-  //   }, 100);
-
-  //   return () => clearInterval(id);
-  // }, [series]);
 
   const females = series.filter((s) => s.sex === "f");
   const males = series.filter((s) => s.sex === "m");
@@ -64,7 +51,6 @@ function MouseDashboard() {
 
     return (
       <svg width={width} height={height} className="mouse-chart" key={subset[0]?.sex}>
-        {/* axes */}
         <g
           ref={(g) => g && d3.select(g).call(d3.axisLeft(yScale).ticks(5))}
           transform={`translate(${mouse.left},0)`}
@@ -74,9 +60,9 @@ function MouseDashboard() {
           transform={`translate(0,${innerHeight + mouse.top})`}
         />
 
-        {/* bars */}
         {subset.map((s) => {
-          const values = s.values[minutes % s.values.length];
+          const idx = Math.floor(minutes) % s.values.length;
+          const values = s.values[idx];
           const x = xScale(s.id)!;
           const y = yScale(values);
           const barHeight = yScale(0) - y;
@@ -90,6 +76,15 @@ function MouseDashboard() {
               width={xScale.bandwidth()}
               height={barHeight}
               fill={color}
+              ref={(rect) => {
+                if (rect) {
+                  d3.select(rect)
+                    .transition()
+                    .duration(50)
+                    .attr("y", y)
+                    .attr("height", barHeight);
+                }
+              }}
             />
           );
         })}
