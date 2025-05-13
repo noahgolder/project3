@@ -1,5 +1,5 @@
 import Clock from "./Components/Clock"
-import MouseDashboard from "./Components/Mouse"
+import MouseDashboard from "./Components/MouseDashboard"
 
 const App = () => {
   return (
