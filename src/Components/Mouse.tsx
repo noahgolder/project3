@@ -1,12 +1,21 @@
 import { useEffect } from "react";
 import { useRef, useState } from "react";
-import mouse from "../Assets/Mouse.png";
+import runningMale from "../Assets/RunningMale.gif";
+import runningFemale from "../Assets/RunningFemale.gif";
+import sleepingMale from "../Assets/SleepingMale.gif";
+import sleepingFemale from "../Assets/SleepingFemale.gif";
 
-const Mouse = ({ speed }: { speed: number }) => {
+type MouseProps = {
+  speed: number;
+  gender: "male" | "female";
+};
+
+const Mouse = ({ speed, gender }: MouseProps) => {
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const angleRef = useRef(0);
   const speedRef = useRef({ x: 0, y: 0 });
   const imgRef = useRef<HTMLImageElement>(null);
+  speed = speed < 20 ? 0 : speed;
 
   useEffect(() => {
     const angle = Math.random() * 2 * Math.PI;
@@ -19,7 +28,7 @@ const Mouse = ({ speed }: { speed: number }) => {
       setPos((prev) => {
         const newX = prev.x + speedRef.current.x;
         const newY = prev.y + speedRef.current.y;
-        
+
         const scaledWidth = (imgRef.current?.width || 0) * 0.6;
         const scaledHeight = (imgRef.current?.height || 0) * 0.6;
         const maxX = window.innerWidth - scaledWidth;
@@ -33,7 +42,7 @@ const Mouse = ({ speed }: { speed: number }) => {
           // Update speed vector based on new angle
           speedRef.current = {
             x: Math.cos(angleRef.current) * speed,
-            y: Math.sin(angleRef.current) * speed
+            y: Math.sin(angleRef.current) * speed,
           };
         }
         if (newY <= -scaledHeight * 0.6 || newY >= maxY) {
@@ -43,7 +52,7 @@ const Mouse = ({ speed }: { speed: number }) => {
           // Update speed vector based on new angle
           speedRef.current = {
             x: Math.cos(angleRef.current) * speed,
-            y: Math.sin(angleRef.current) * speed
+            y: Math.sin(angleRef.current) * speed,
           };
         }
 
@@ -61,9 +70,17 @@ const Mouse = ({ speed }: { speed: number }) => {
   return (
     <img
       ref={imgRef}
-      src={mouse}
+      src={
+        speed > 20
+          ? gender === "male"
+            ? runningMale
+            : runningFemale
+          : gender === "male"
+          ? sleepingMale
+          : sleepingFemale
+      }
       onError={(e) => (e.currentTarget.style.display = "none")}
-      className="absolute -z-1 scale-[0.3]"
+      className="absolute scale-[0.3]"
       style={{
         transform: `rotate(${angleRef.current + Math.PI / 2}rad)`,
         left: pos.x,
