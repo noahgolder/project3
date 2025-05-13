@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import * as d3 from "d3";
 import "../index.css";
+import useStore from "../Hooks/useStore"
 
 interface MouseSeries {
   id: string;
   sex: "f" | "m";
   values: number[];
 }
+
 function MouseDashboard() {
   const [series, setSeries] = useState<MouseSeries[]>([]);
-  const [frame, setFrame] = useState(0);
+  // const [frame, setFrame] = useState(0);
+  const { minutes } = useStore();
 
   useEffect(() => {
     d3.csv("../../Checkpoint/mouse_data.csv").then((rows) => {
@@ -26,16 +29,17 @@ function MouseDashboard() {
     });
   }, []);
 
-  useEffect(() => {
-    if (series.length === 0) {
-      return;
-    }
-    const id = setInterval(() => {
-      setFrame((f) => (f + 1) % series[0].values.length);
-    }, 100);
+  // // sets up the animation
+  // useEffect(() => {
+  //   if (series.length === 0) {
+  //     return;
+  //   }
+  //   const id = setInterval(() => {
+  //     setFrame((f) => (f + 1) % series[0].values.length);
+  //   }, 100);
 
-    return () => clearInterval(id);
-  }, [series]);
+  //   return () => clearInterval(id);
+  // }, [series]);
 
   const females = series.filter((s) => s.sex === "f");
   const males = series.filter((s) => s.sex === "m");
@@ -72,10 +76,10 @@ function MouseDashboard() {
 
         {/* bars */}
         {subset.map((s) => {
-          const values       = s.values[frame];
-          const x       = xScale(s.id)!;
-          const y       = yScale(values);
-          const barHeight    = yScale(0) - y;
+          const values = s.values[minutes % s.values.length];
+          const x = xScale(s.id)!;
+          const y = yScale(values);
+          const barHeight = yScale(0) - y;
           const color  = s.sex === "f" ? "#e56997" : "#4f83c4";
 
           return (
