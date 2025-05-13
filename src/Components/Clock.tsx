@@ -1,35 +1,40 @@
+import { FaPause, FaPlay } from "react-icons/fa";
 import useClock from "../Hooks/useClock";
+import {
+  BsSkipBackwardFill,
+  BsSkipEndFill,
+  BsSkipForwardFill,
+  BsSkipStartFill,
+} from "react-icons/bs";
 
 const Clock = () => {
-  const { svgRef, minutes, setMinutes, play, setPlay, speed, setSpeed } = useClock();
+  const { svgRef, minutes, setMinutes, play, setPlay, setSpeed } = useClock();
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center gap-4">
+      <h1 className="text-2xl font-bold">
+        <span>{String(Math.floor(minutes / 60) % 12 || 12).padStart(2, "0")}</span> :{" "}
+        <span>{String(Math.round(minutes % 60)).padStart(2, "0")}</span>{" "}
+        <span>{minutes > 60 * 12 ? "PM" : "AM"}</span>
+      </h1>
       <svg ref={svgRef} />
-      <div>
-        <input
-          type="range"
-          min={0}
-          max={1440}
-          value={minutes}
-          onChange={(e) => setMinutes(parseInt(e.target.value))}
-        />
-        <p>{minutes}</p>
-        <input
-          type="checkbox"
-          checked={play}
-          onChange={(e) => setPlay(e.target.checked)}
-        />
-        <input
-          type="range"
-          min={1}
-          max={10}
-          value={speed}
-          onChange={(e) => setSpeed(parseInt(e.target.value))}
-        />
+      <div className="flex gap-2 text-2xl">
+        <button onClick={() => setSpeed((prev) => prev > 0.25 ? prev / 2 : prev)}>
+          <BsSkipBackwardFill />
+        </button>
+        <button onClick={() => setMinutes(minutes - 60)}>
+          <BsSkipStartFill />
+        </button>
+        <button onClick={() => setPlay(!play)}>{play ? <FaPause /> : <FaPlay />}</button>
+        <button onClick={() => setMinutes(minutes + 60)}>
+          <BsSkipEndFill />
+        </button>
+        <button onClick={() => setSpeed((prev) => prev < 16 ? prev * 2 : prev)}>
+          <BsSkipForwardFill />
+        </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Clock
+export default Clock;

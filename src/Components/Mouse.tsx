@@ -1,108 +1,76 @@
-import React, { useEffect, useState } from "react";
-import * as d3 from "d3";
-import "../index.css";
+import { useEffect } from "react";
+import { useRef, useState } from "react";
+import mouse from "../Assets/Mouse.png";
 
-interface MouseSeries {
-  id: string;
-  sex: "f" | "m";
-  values: number[];
-}
-function MouseDashboard() {
-  const [series, setSeries] = useState<MouseSeries[]>([]);
-  const [frame, setFrame] = useState(0);
+const Mouse = ({ speed }: { speed: number }) => {
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const angleRef = useRef(0);
+  const speedRef = useRef({ x: 0, y: 0 });
+  const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    d3.csv("../../Checkpoint/mouse_data.csv").then((rows) => {
-      const activityCols = rows.columns!.filter((col) => col.endsWith("_act"));
-
-      const parsed: MouseSeries[] = activityCols.map((col) => {
-        const id = col.replace("_act", "");
-        const sex  = id.startsWith("f") ? "f" : "m";
-        const values = rows.map((row) => +row[col]);
-        return { id, sex, values };
-      });
-
-      setSeries(parsed);
-    });
+    const angle = Math.random() * 2 * Math.PI;
+    speedRef.current = { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed };
+    angleRef.current = angle;
   }, []);
 
   useEffect(() => {
-    if (series.length === 0) {
-      return;
-    }
-    const id = setInterval(() => {
-      setFrame((f) => (f + 1) % series[0].values.length);
-    }, 100);
+    const interval = setInterval(() => {
+      setPos((prev) => {
+        const newX = prev.x + speedRef.current.x;
+        const newY = prev.y + speedRef.current.y;
+        
+        const scaledWidth = (imgRef.current?.width || 0) * 0.6;
+        const scaledHeight = (imgRef.current?.height || 0) * 0.6;
+        const maxX = window.innerWidth - scaledWidth;
+        const maxY = window.innerHeight - scaledHeight;
 
-    return () => clearInterval(id);
-  }, [series]);
+        // Check for collisions with edges and bounce
+        if (newX <= -scaledWidth * 0.6 || newX >= maxX) {
+          speedRef.current.x *= -1;
+          const randomIncrement = (Math.random() * 2 - 1) * 0.5;
+          angleRef.current = Math.atan2(speedRef.current.y, speedRef.current.x) + randomIncrement;
+          // Update speed vector based on new angle
+          speedRef.current = {
+            x: Math.cos(angleRef.current) * speed,
+            y: Math.sin(angleRef.current) * speed
+          };
+        }
+        if (newY <= -scaledHeight * 0.6 || newY >= maxY) {
+          speedRef.current.y *= -1;
+          const randomIncrement = (Math.random() * 2 - 1) * 0.5;
+          angleRef.current = Math.atan2(speedRef.current.y, speedRef.current.x) + randomIncrement;
+          // Update speed vector based on new angle
+          speedRef.current = {
+            x: Math.cos(angleRef.current) * speed,
+            y: Math.sin(angleRef.current) * speed
+          };
+        }
 
-  const females = series.filter((s) => s.sex === "f");
-  const males = series.filter((s) => s.sex === "m");
+        // Ensure position stays within bounds
+        return {
+          x: Math.max(-scaledWidth * 0.6, Math.min(newX, maxX)),
+          y: Math.max(-scaledHeight * 0.6, Math.min(newY, maxY)),
+        };
+      });
+    }, 1000 / 60);
 
-  const allValues = series.flatMap((s) => s.values);
-  const yScale = d3
-    .scaleLinear()
-    .domain([0, d3.max(allValues) ?? 0])
-    .nice();
-
-  const plot = (subset: MouseSeries[], width: number, height: number) => {
-    const mouse = { top: 20, right: 20, bottom: 30, left: 40 };
-    const innerHeight = height - mouse.top - mouse.bottom;
-
-    const xScale = d3
-      .scaleBand<string>()
-      .domain(subset.map((s) => s.id))
-      .range([mouse.left, width - mouse.right])
-      .padding(0.1);
-
-    yScale.range([innerHeight + mouse.top, mouse.top]);
-
-    return (
-      <svg width={width} height={height} className="mouse-chart" key={subset[0]?.sex}>
-        {/* axes */}
-        <g
-          ref={(g) => g && d3.select(g).call(d3.axisLeft(yScale).ticks(5))}
-          transform={`translate(${mouse.left},0)`}
-        />
-        <g
-          ref={(g) => g && d3.select(g).call(d3.axisBottom(xScale).tickSizeOuter(0))}
-          transform={`translate(0,${innerHeight + mouse.top})`}
-        />
-
-        {/* bars */}
-        {subset.map((s) => {
-          const values       = s.values[frame];
-          const x       = xScale(s.id)!;
-          const y       = yScale(values);
-          const barHeight    = yScale(0) - y;
-          const color  = s.sex === "f" ? "#e56997" : "#4f83c4";
-
-          return (
-            <rect
-              key={s.id}
-              x={x}
-              y={y}
-              width={xScale.bandwidth()}
-              height={barHeight}
-              fill={color}
-            />
-          );
-        })}
-      </svg>
-    );
-  };
-
-
-  const height = 600;
-  const width  = 600;
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="mouse-dashboard">
-      {plot(females, width, height)}
-      {plot(males, width, height)}
-    </div>
+    <img
+      ref={imgRef}
+      src={mouse}
+      onError={(e) => (e.currentTarget.style.display = "none")}
+      className="absolute -z-1 scale-[0.3]"
+      style={{
+        transform: `rotate(${angleRef.current + Math.PI / 2}rad)`,
+        left: pos.x,
+        top: pos.y,
+      }}
+    />
   );
-}
+};
 
-export default MouseDashboard;
+export default Mouse;

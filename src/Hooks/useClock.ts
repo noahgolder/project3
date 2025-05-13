@@ -12,6 +12,16 @@ const useClock = () => {
   const draggingRef = useRef(false);
 
   useEffect(() => {
+    if (!play) return;
+
+    const interval = setInterval(() => {
+      setMinutes(prev => (prev + speed) % 1440);
+    }, 1000 / 60);
+
+    return () => clearInterval(interval);
+  }, [play, speed]);
+
+  useEffect(() => {
     const radius = 150;
     const svg = d3
       .select(svgRef.current)
@@ -54,7 +64,7 @@ const useClock = () => {
       .call(drag as any);
 
     const updateClock = () => {
-      const hourAngle = (minutes / 1440) * 360;
+      const hourAngle = (minutes / 60 / 12) * 360;
       const minuteAngle = ((minutes % 60) / 60) * 360;
 
       svg.selectAll(".hour-hand").remove();

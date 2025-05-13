@@ -1,13 +1,21 @@
-import Clock from "./Components/Clock"
-import MouseDashboard from "./Components/Mouse"
+import React, { useState } from "react";
+import Thermometer from "./Components/Thermometer";
+import Clock from "./Components/Clock";
+import Mouse from "./Components/Mouse";
 
-const App = () => {
+const App: React.FC = () => {
+  const [temperature, setTemperature] = useState(35);
+
   return (
-    <div>
+    <div className="flex items-center justify-center gap-4 relative min-h-screen overflow-hidden">
+      <Thermometer temp={temperature} setTemp={setTemperature} />
       <Clock />
-      <MouseDashboard />
+      <Thermometer temp={temperature} setTemp={setTemperature} />
+      {Array.from({ length: 10 }).map((_, index) => (
+        <Mouse key={index} speed={10} />
+      ))}
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
