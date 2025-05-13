@@ -5,14 +5,6 @@ const Thermometer = ({ temp, setTemp }: { temp: number, setTemp: (temp: number) 
   const maxTemp = 37;
   const minTemp = 30;
   const svgRef = useRef<SVGSVGElement | null>(null);
-  const [minTemp, setMinTemp] = useState(temp);
-  const [maxTemp, setMaxTemp] = useState(temp);
-
-  // Update the min/max range dynamically
-  useEffect(() => {
-    if (temp < minTemp) setMinTemp(temp);
-    if (temp > maxTemp) setMaxTemp(temp);
-  }, [temp, minTemp, maxTemp]);
 
   useEffect(() => {
     const svg = d3.select(svgRef.current);
