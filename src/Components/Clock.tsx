@@ -6,9 +6,11 @@ import {
   BsSkipForwardFill,
   BsSkipStartFill,
 } from "react-icons/bs";
+import useStore from "../Hooks/useStore";
 
 const Clock = () => {
-  const { svgRef, minutes, setMinutes, play, setPlay, setSpeed } = useClock();
+  const { svgRef, play, setPlay, setSpeed } = useClock();
+  const { minutes, setMinutes } = useStore();
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -19,17 +21,17 @@ const Clock = () => {
       </h1>
       <svg ref={svgRef} />
       <div className="flex gap-2 text-2xl">
-        <button onClick={() => setSpeed((prev) => prev > 0.25 ? prev / 2 : prev)}>
+        <button className="cursor-pointer" onClick={() => setSpeed((prev) => prev > 0.25 ? prev / 2 : prev)}>
           <BsSkipBackwardFill />
         </button>
-        <button onClick={() => setMinutes(minutes - 60)}>
+        <button className="cursor-pointer" onClick={() => setMinutes(minutes - 60)}>
           <BsSkipStartFill />
         </button>
-        <button onClick={() => setPlay(!play)}>{play ? <FaPause /> : <FaPlay />}</button>
-        <button onClick={() => setMinutes(minutes + 60)}>
+        <button className="cursor-pointer" onClick={() => setPlay(!play)}>{play ? <FaPause /> : <FaPlay />}</button>
+        <button className="cursor-pointer" onClick={() => setMinutes(minutes + 60)}>
           <BsSkipEndFill />
         </button>
-        <button onClick={() => setSpeed((prev) => prev < 16 ? prev * 2 : prev)}>
+        <button className="cursor-pointer" onClick={() => setSpeed((prev) => prev < 16 ? prev * 2 : prev)}>
           <BsSkipForwardFill />
         </button>
       </div>
