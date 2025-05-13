@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Thermometer from "./Components/Thermometer";
 
 const App: React.FC = () => {
-  const [temperature, setTemperature] = useState(50);
+  const [temperature, setTemperature] = useState(20);
 
   return (
     <div style={{ textAlign: "center" }}>
@@ -10,8 +10,8 @@ const App: React.FC = () => {
       <Thermometer temp={temperature} />
       <input 
         type="range" 
-        min="0" 
-        max="100" 
+        min="-50" 
+        max="150" 
         value={temperature} 
         onChange={(e) => setTemperature(Number(e.target.value))}
         style={{ marginTop: "20px" }}
